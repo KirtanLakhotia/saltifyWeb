@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
+import FloatingCartBar from './components/cart/FloatingCartBar.jsx'
 import Home from './pages/Home.jsx'
 import Benefits from './pages/Benefits.jsx'
 import Products from './pages/Products.jsx'
@@ -47,8 +48,10 @@ function App() {
         </main>
         <Footer />
       </div>
+      <FloatingCartBar />
     </div>
   )
 }
 
 export default App
+
