@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f8fafc;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --line: rgba(148, 163, 184, 0.28);
+  --accent: #38bdf8;
+  --accent-2: #6366f1;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+  background-color: var(--bg);
+  color: var(--ink);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.font-display {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(139, 197, 255, 0.32);
+  color: #f8fafc;
+}
+
+.glass-panel {
+  border: 1px solid var(--line);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.88),
+    rgba(255, 255, 255, 0.62)
+  );
+  backdrop-filter: blur(18px);
+}
+
+.section-headline {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.noise-overlay {
+  background-image: radial-gradient(
+      rgba(255, 255, 255, 0.09) 0.7px,
+      transparent 0.7px
+    ),
+    radial-gradient(rgba(255, 255, 255, 0.05) 0.7px, transparent 0.7px);
+  background-size:
+    16px 16px,
+    23px 23px;
+  background-position:
+    0 0,
+    8px 8px;
+  opacity: 0.13;
+}
