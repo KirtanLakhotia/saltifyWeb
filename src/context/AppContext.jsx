@@ -1,5 +1,5 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
-
+const backendBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'
   export const AppContext = createContext(null)
   const AUTH_STORAGE_KEY = 'saltify_auth'
   const CART_STORAGE_PREFIX = 'saltify_cart'
@@ -47,7 +47,7 @@ export function AppProvider({ children }) {
         // ✅ If logged in → fetch from backend
         if (user?.token) {
            try {
-      const res = await fetch(`http://localhost:5000/api/cart/${encodeURIComponent(user.sub)}`)
+      const res = await fetch(`${backendBase}/cart/${encodeURIComponent(user.sub)}`)
 
 
       const data = await res.json()
@@ -148,7 +148,7 @@ export function AppProvider({ children }) {
       // ✅ If user logged in → call backend
       if (user?.token) {
         try {
-          await fetch("http://localhost:5000/api/cart/add", {
+          await fetch(`${backendBase}/cart/add`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -193,7 +193,7 @@ export function AppProvider({ children }) {
     const removeFromCart = useCallback(async (productId) => {
       if (user?.token) {
         try {
-          await fetch("http://localhost:5000/api/cart/remove", {
+          await fetch(`${backendBase}/cart/remove`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
