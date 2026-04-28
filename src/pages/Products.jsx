@@ -8,6 +8,8 @@ function Products() {
   const [isDragging, setIsDragging] = useState(false)
   const dragStartXRef = useRef(0)
   const dragDeltaXRef = useRef(0)
+  const touchStartXRef = useRef(0)
+  const touchDeltaXRef = useRef(0)
 
   const activeIndex = products.findIndex((p) => p.id === active)
 
@@ -22,6 +24,7 @@ function Products() {
     setActive(products[bounded].id)
   }
 
+  // Pointer events for desktop
   const onPointerDown = (event) => {
     setIsDragging(true)
     dragStartXRef.current = event.clientX
@@ -42,6 +45,27 @@ function Products() {
     if (dragDeltaXRef.current <= -threshold) goToIndex(activeIndex + 1)
     if (dragDeltaXRef.current >= threshold) goToIndex(activeIndex - 1)
     dragDeltaXRef.current = 0
+  }
+
+  // Touch events for mobile
+  const onTouchStart = (event) => {
+    if (event.touches.length === 1) {
+      touchStartXRef.current = event.touches[0].clientX
+      touchDeltaXRef.current = 0
+    }
+  }
+
+  const onTouchMove = (event) => {
+    if (event.touches.length === 1) {
+      touchDeltaXRef.current = event.touches[0].clientX - touchStartXRef.current
+    }
+  }
+
+  const onTouchEnd = () => {
+    const threshold = 50
+    if (touchDeltaXRef.current <= -threshold) goToIndex(activeIndex + 1)
+    if (touchDeltaXRef.current >= threshold) goToIndex(activeIndex - 1)
+    touchDeltaXRef.current = 0
   }
 
   const onWheel = (event) => {
@@ -93,6 +117,9 @@ function Products() {
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerUp}
             onWheel={onWheel}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
           >
             <motion.div
               className="flex"
