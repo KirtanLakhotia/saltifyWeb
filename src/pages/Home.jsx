@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+﻿import { useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Hero from '../components/landing/Hero.jsx'
@@ -18,6 +18,9 @@ const journey = [
 function Home() {
   const [activeIndex, setActiveIndex] = useState(0)
   const [featuredAdded, setFeaturedAdded] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const dragStartXRef = useRef(0)
+  const dragDeltaXRef = useRef(0)
   const navigate = useNavigate()
   const { user, addToCart } = useAppContext()
   const activeProduct = products[activeIndex]
@@ -30,6 +33,11 @@ function Home() {
     ],
     [],
   )
+
+  const goToIndex = (nextIndex) => {
+    const bounded = Math.max(0, Math.min(products.length - 1, nextIndex))
+    setActiveIndex(bounded)
+  }
 
   const onOrderNow = () => {
     if (!user) {
@@ -48,6 +56,36 @@ function Home() {
     addToCart(activeProduct, 1)
     setFeaturedAdded(true)
     window.setTimeout(() => setFeaturedAdded(false), 700)
+  }
+
+  const onPointerDown = (event) => {
+    setIsDragging(true)
+    dragStartXRef.current = event.clientX
+    dragDeltaXRef.current = 0
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+
+  const onPointerMove = (event) => {
+    if (!isDragging) return
+    dragDeltaXRef.current = event.clientX - dragStartXRef.current
+  }
+
+  const onPointerUp = (event) => {
+    if (!isDragging) return
+    setIsDragging(false)
+    event.currentTarget.releasePointerCapture(event.pointerId)
+    const threshold = 50
+    if (dragDeltaXRef.current <= -threshold) goToIndex(activeIndex + 1)
+    if (dragDeltaXRef.current >= threshold) goToIndex(activeIndex - 1)
+    dragDeltaXRef.current = 0
+  }
+
+  const onWheel = (event) => {
+    const horizontal = event.deltaX
+    if (Math.abs(horizontal) < 18) return
+    if (Math.abs(horizontal) <= Math.abs(event.deltaY)) return
+    if (horizontal > 0) goToIndex(activeIndex + 1)
+    else goToIndex(activeIndex - 1)
   }
 
   return (
@@ -76,7 +114,7 @@ function Home() {
               {products.map((item, index) => (
                 <button
                   key={item.id}
-                  onClick={() => setActiveIndex(index)}
+                  onClick={() => goToIndex(index)}
                   className={`h-2.5 rounded-full transition-all ${
                     activeIndex === index
                       ? 'w-10 bg-slate-900'
@@ -87,50 +125,57 @@ function Home() {
             </div>
           </div>
 
-          <motion.div
-            key={activeProduct.id}
-            initial={{ opacity: 0, scale: 0.93, filter: 'blur(12px)' }}
-            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            transition={{ duration: 0.85, ease: 'easeInOut' }}
-            className="rounded-[2rem] border border-slate-200 bg-white/80 p-6 shadow-[0_20px_45px_rgba(148,163,184,0.22)] backdrop-blur-md"
+          <div
+            className={`overflow-hidden rounded-[2rem] border border-slate-200 bg-white/80 shadow-[0_20px_45px_rgba(148,163,184,0.22)] backdrop-blur-md ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerUp}
+            onWheel={onWheel}
           >
-            <motion.img
-              src={activeProduct.image}
-              alt={activeProduct.name}
-              className="mx-auto h-64 w-auto object-contain sm:h-80"
-              animate={{ y: [0, -8, 0], rotate: [0, -1.1, 0, 1.1, 0] }}
-              transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            <h3 className="mt-6 text-2xl font-semibold text-slate-900">
-              {activeProduct.name}
-            </h3>
-            <p className="mt-3 text-sm text-slate-600">{activeProduct.description}</p>
-            <p className="mt-4 text-3xl font-bold text-slate-900">
-              INR {activeProduct.price}
-            </p>
-            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-              <button
-                onClick={onAddToCart}
-                className={`rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:shadow-md ${
-                  featuredAdded
-                    ? 'scale-[1.03] border-emerald-300 bg-emerald-50 text-emerald-700'
-                    : ''
-                }`}
-              >
-                {featuredAdded ? 'Added ✓' : 'Add to Cart'}
-              </button>
-              <button
-                onClick={onOrderNow}
-                className="rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_24px_rgba(56,189,248,0.25)] transition hover:-translate-y-0.5 hover:shadow-[0_0_34px_rgba(56,189,248,0.32)]"
-              >
-                Order Now
-              </button>
-            </div>
-          </motion.div>
+            <motion.div
+              className="flex"
+              animate={{ x: `-${activeIndex * 100}%` }}
+              transition={{ duration: 0.45, ease: 'easeInOut' }}
+            >
+              {products.map((item, index) => (
+                <div key={item.id} className="w-full shrink-0 p-6">
+                  <motion.img
+                    src={item.image}
+                    alt={item.name}
+                    className="mx-auto h-64 w-auto object-contain sm:h-80"
+                    animate={activeIndex === index ? { y: [0, -8, 0], rotate: [0, -1.1, 0, 1.1, 0] } : { y: 0, rotate: 0 }}
+                    transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+                  />
+                  <h3 className="mt-6 text-2xl font-semibold text-slate-900">{item.name}</h3>
+                  <p className="mt-3 text-sm text-slate-600">{item.description}</p>
+                  <p className="mt-4 text-3xl font-bold text-slate-900">INR {item.price}</p>
+                  <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                    <button
+                      onClick={onAddToCart}
+                      className={`rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:shadow-md ${
+                        featuredAdded && index === activeIndex
+                          ? 'scale-[1.03] border-emerald-300 bg-emerald-50 text-emerald-700'
+                          : ''
+                      }`}
+                    >
+                      {featuredAdded && index === activeIndex ? 'Added ✓' : 'Add to Cart'}
+                    </button>
+                    <button
+                      onClick={onOrderNow}
+                      className="rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_24px_rgba(56,189,248,0.25)] transition hover:-translate-y-0.5 hover:shadow-[0_0_34px_rgba(56,189,248,0.32)]"
+                    >
+                      Order Now
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          </div>
         </div>
       </section>
 
-        {/* <section className="space-y-8">
+      {/* <section className="space-y-8">
           <div className="flex items-end justify-between gap-4">
             <h2 className="section-headline text-slate-900">Explore all variants</h2>
             <Link to="/products" className="text-sm font-semibold text-sky-700">
@@ -221,3 +266,4 @@ function Home() {
 }
 
 export default Home
+

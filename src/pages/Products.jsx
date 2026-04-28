@@ -1,16 +1,56 @@
-import { useMemo, useState } from 'react'
+﻿import { useMemo, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import ProductCard from '../components/landing/ProductCard.jsx'
 import { products } from '../utils/siteData.js'
 
 function Products() {
   const [active, setActive] = useState(products[0].id)
-  const activeProduct = products.find((p) => p.id === active) || products[0]
+  const [isDragging, setIsDragging] = useState(false)
+  const dragStartXRef = useRef(0)
+  const dragDeltaXRef = useRef(0)
+
+  const activeIndex = products.findIndex((p) => p.id === active)
+
   const tone = useMemo(() => {
-    if (active ===1) return 'from-sky-100 via-white to-amber-50'
+    if (active === 1) return 'from-sky-100 via-white to-amber-50'
     if (active === 2) return 'from-fuchsia-100 via-white to-indigo-50'
     return 'from-emerald-100 via-white to-cyan-50'
   }, [active])
+
+  const goToIndex = (nextIndex) => {
+    const bounded = Math.max(0, Math.min(products.length - 1, nextIndex))
+    setActive(products[bounded].id)
+  }
+
+  const onPointerDown = (event) => {
+    setIsDragging(true)
+    dragStartXRef.current = event.clientX
+    dragDeltaXRef.current = 0
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+
+  const onPointerMove = (event) => {
+    if (!isDragging) return
+    dragDeltaXRef.current = event.clientX - dragStartXRef.current
+  }
+
+  const onPointerUp = (event) => {
+    if (!isDragging) return
+    setIsDragging(false)
+    event.currentTarget.releasePointerCapture(event.pointerId)
+    const threshold = 50
+    if (dragDeltaXRef.current <= -threshold) goToIndex(activeIndex + 1)
+    if (dragDeltaXRef.current >= threshold) goToIndex(activeIndex - 1)
+    dragDeltaXRef.current = 0
+  }
+
+  const onWheel = (event) => {
+    const horizontal = event.deltaX
+    if (Math.abs(horizontal) < 18) return
+    if (Math.abs(horizontal) <= Math.abs(event.deltaY)) return
+    if (horizontal > 0) goToIndex(activeIndex + 1)
+    else goToIndex(activeIndex - 1)
+  }
 
   return (
     <div className="space-y-12">
@@ -46,22 +86,33 @@ function Products() {
             </div>
           </div>
 
-          <motion.div
-            key={activeProduct.id}
-            initial={{ opacity: 0, y: 28, filter: 'blur(8px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            transition={{ duration: 0.75, ease: 'easeInOut' }}
-            className="rounded-[1.8rem] border border-slate-200 bg-white/80 p-6 shadow-[0_18px_40px_rgba(148,163,184,0.18)]"
+          <div
+            className={`overflow-hidden rounded-[1.8rem] border border-slate-200 bg-white/80 shadow-[0_18px_40px_rgba(148,163,184,0.18)] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerUp}
+            onWheel={onWheel}
           >
-            <img
-              src={activeProduct.image}
-              alt={activeProduct.name}
-              className="mx-auto h-64 w-auto object-contain sm:h-80"
-            />
-            <h2 className="mt-4 text-2xl font-semibold text-slate-900">{activeProduct.name}</h2>
-            <p className="mt-2 text-sm text-slate-600">{activeProduct.description}</p>
-            <p className="mt-3 text-3xl font-bold text-slate-900">INR {activeProduct.price}</p>
-          </motion.div>
+            <motion.div
+              className="flex"
+              animate={{ x: `-${activeIndex * 100}%` }}
+              transition={{ duration: 0.45, ease: 'easeInOut' }}
+            >
+              {products.map((item) => (
+                <div key={item.id} className="w-full shrink-0 p-6">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="mx-auto h-64 w-auto object-contain sm:h-80"
+                  />
+                  <h2 className="mt-4 text-2xl font-semibold text-slate-900">{item.name}</h2>
+                  <p className="mt-2 text-sm text-slate-600">{item.description}</p>
+                  <p className="mt-3 text-3xl font-bold text-slate-900">INR {item.price}</p>
+                </div>
+              ))}
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -78,3 +129,4 @@ function Products() {
 }
 
 export default Products
+

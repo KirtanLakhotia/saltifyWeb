@@ -41,7 +41,7 @@ export const products = [
     image: '/finalll/100g_new_bgr.png',
     description:
       'Perfect starter size for home use, daily cooking, and taste exploration.',
-    price: 399,
+    price: 560,
     buyUrl:
       'https://www.amazon.in/Saltify-Bamboo-Alkaline-Roasted-Powdered/dp/B0CG654FGK',
   },
@@ -51,7 +51,7 @@ export const products = [
     image: '/finalll/250g_new_bgr.png',
     description:
       'Balanced size for regular users who want consistency in every meal.',
-    price: 799,
+    price: 1300,
     buyUrl:
       'https://www.amazon.in/Saltify-Bamboo-Alkaline-Roasted-Powdered/dp/B0CG64L274',
   },
@@ -61,7 +61,7 @@ export const products = [
     image: '/finalll/500g_new_bgr.png',
     description:
       'Family-size premium pack for long-term use and maximum value.',
-    price: 1399,
+    price: 2500,
     buyUrl:
       'https://www.amazon.in/Saltify-Bamboo-Alkaline-Roasted-Powdered/dp/B0CG643B3R',
   },
