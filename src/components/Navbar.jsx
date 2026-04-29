@@ -125,22 +125,23 @@ function Navbar() {
               </div>
 
               <div className="space-y-3">
-                {[
-                  { label: 'Home', to: '/' },
-                  { label: 'Products', to: '/products' },
-                  { label: 'About', to: '/about' },
-                  { label: `Cart ${cartCount}`, to: '/checkout' },
-                  { label: 'Login', to: '/login' },
-                ].map((item) => (
+                {navLinks.map((link) => (
                   <Link
-                    key={item.to}
-                    to={item.to}
+                    key={link.path}
+                    to={link.path}
                     onClick={() => setMenuOpen(false)}
                     className="block rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold uppercase tracking-[0.14em] text-slate-700 hover:bg-slate-50"
                   >
-                    {item.label}
+                    {link.name}
                   </Link>
                 ))}
+                <Link
+                  to="/checkout"
+                  onClick={() => setMenuOpen(false)}
+                  className="block rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold uppercase tracking-[0.14em] text-slate-700 hover:bg-slate-50"
+                >
+                  Cart {cartCount}
+                </Link>
                 {user ? (
                   <button
                     onClick={() => {
@@ -151,7 +152,15 @@ function Navbar() {
                   >
                     Logout
                   </button>
-                ) : null}
+                ) : (
+                  <Link
+                    to="/login"
+                    onClick={() => setMenuOpen(false)}
+                    className="block rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold uppercase tracking-[0.14em] text-slate-700 hover:bg-slate-50"
+                  >
+                    Login
+                  </Link>
+                )}
               </div>
             </motion.aside>
           </>
