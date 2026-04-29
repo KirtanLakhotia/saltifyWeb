@@ -6,8 +6,10 @@ import { products } from '../utils/siteData.js'
 function Products() {
   const [active, setActive] = useState(products[0].id)
   const [isDragging, setIsDragging] = useState(false)
+  const [dragArmed, setDragArmed] = useState(false)
   const dragStartXRef = useRef(0)
   const dragDeltaXRef = useRef(0)
+  const pointerIdRef = useRef(null)
   const touchStartXRef = useRef(0)
   const touchDeltaXRef = useRef(0)
 
@@ -24,23 +26,41 @@ function Products() {
     setActive(products[bounded].id)
   }
 
+  const isInteractiveTarget = (target) =>
+    Boolean(target?.closest('button, a, input, select, textarea, label, [role="button"]'))
+
   // Pointer events for desktop
   const onPointerDown = (event) => {
-    setIsDragging(true)
+    if (isInteractiveTarget(event.target)) {
+      setDragArmed(false)
+      setIsDragging(false)
+      return
+    }
+    setDragArmed(true)
+    setIsDragging(false)
+    pointerIdRef.current = event.pointerId
     dragStartXRef.current = event.clientX
     dragDeltaXRef.current = 0
-    event.currentTarget.setPointerCapture(event.pointerId)
   }
 
   const onPointerMove = (event) => {
-    if (!isDragging) return
+    if (!dragArmed || pointerIdRef.current !== event.pointerId) return
     dragDeltaXRef.current = event.clientX - dragStartXRef.current
+    if (!isDragging && Math.abs(dragDeltaXRef.current) > 6) {
+      setIsDragging(true)
+      event.currentTarget.setPointerCapture(event.pointerId)
+    }
   }
 
   const onPointerUp = (event) => {
+    if (!dragArmed || pointerIdRef.current !== event.pointerId) return
+    setDragArmed(false)
+    pointerIdRef.current = null
     if (!isDragging) return
     setIsDragging(false)
-    event.currentTarget.releasePointerCapture(event.pointerId)
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
     const threshold = 50
     if (dragDeltaXRef.current <= -threshold) goToIndex(activeIndex + 1)
     if (dragDeltaXRef.current >= threshold) goToIndex(activeIndex - 1)
