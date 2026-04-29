@@ -8,6 +8,7 @@ function Checkout() {
   const { user, cart, removeFromCart , setCart} = useAppContext()
   const [formData, setFormData] = useState({
     fullName: '',
+    email: '',
     phone: '',
     address: '',
     city: '',
@@ -39,6 +40,7 @@ function Checkout() {
       if (data?.user) {
         setFormData({
           fullName: data.user.name || '',
+          email: data.user.email || '',
           phone: data.user.phone || '',
           address: data.user.address || '',
           city: data.user.city || '',
@@ -67,6 +69,10 @@ function Checkout() {
 
     if (!formData.fullName.trim()) {
       nextErrors.fullName = 'Full name is required.'
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      nextErrors.email = 'Enter a valid email address.'
     }
 
     if (!/^\d{10}$/.test(formData.phone.trim())) {
@@ -110,6 +116,7 @@ function Checkout() {
         items: cart,
         totalAmount: total,
         phone: formData.phone.trim(),
+        email: formData.email.trim(),
         address: formData.address.trim(),
         city: formData.city.trim(),
         pincode: formData.pincode.trim(),
@@ -189,6 +196,7 @@ function Checkout() {
 
       prefill: {
         name: formData.fullName,
+        email: formData.email,
         contact: formData.phone,
       },
 
@@ -315,6 +323,22 @@ function Checkout() {
               />
               {errors.phone ? (
                 <p className="mt-1 text-xs text-rose-600">{errors.phone}</p>
+              ) : null}
+            </div>
+
+            <div className="sm:col-span-2">
+              <label className="text-sm font-semibold text-slate-700">Email</label>
+              <input
+                name="email"
+                value={formData.email}
+                onChange={onChange}
+                placeholder="Enter your email"
+                className={fieldClass}
+                type="email"
+                autoComplete="email"
+              />
+              {errors.email ? (
+                <p className="mt-1 text-xs text-rose-600">{errors.email}</p>
               ) : null}
             </div>
 
