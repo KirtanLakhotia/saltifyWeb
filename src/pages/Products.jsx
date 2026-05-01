@@ -1,4 +1,4 @@
-﻿import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import ProductCard from '../components/landing/ProductCard.jsx'
 import { products } from '../utils/siteData.js'
@@ -10,6 +10,13 @@ function Products() {
   const dragStartXRef = useRef(0)
   const dragDeltaXRef = useRef(0)
   const pointerIdRef = useRef(null)
+  const animationLockRef = useRef(false)
+  const animationUnlockTimerRef = useRef(null)
+  const wheelSessionRef = useRef({
+    accumulatedX: 0,
+    triggered: false,
+    lastEventAt: 0,
+  })
   const touchStartXRef = useRef(0)
   const touchDeltaXRef = useRef(0)
 
@@ -21,16 +28,47 @@ function Products() {
     return 'from-emerald-100 via-white to-cyan-50'
   }, [active])
 
+  const ANIMATION_LOCK_MS = 480
+  const DRAG_THRESHOLD_PX = 56
+  const TOUCH_THRESHOLD_PX = 56
+  const WHEEL_STEP_THRESHOLD = 42
+  const WHEEL_IDLE_RESET_MS = 180
+
+  useEffect(() => () => {
+    if (animationUnlockTimerRef.current) {
+      window.clearTimeout(animationUnlockTimerRef.current)
+    }
+  }, [])
+
   const goToIndex = (nextIndex) => {
     const bounded = Math.max(0, Math.min(products.length - 1, nextIndex))
     setActive(products[bounded].id)
   }
 
+  const triggerStep = (direction) => {
+    if (animationLockRef.current) return false
+    animationLockRef.current = true
+    if (animationUnlockTimerRef.current) {
+      window.clearTimeout(animationUnlockTimerRef.current)
+    }
+    animationUnlockTimerRef.current = window.setTimeout(() => {
+      animationLockRef.current = false
+    }, ANIMATION_LOCK_MS)
+
+    setActive((prevActive) => {
+      const currentIndex = products.findIndex((p) => p.id === prevActive)
+      const nextIndex = direction > 0 ? currentIndex + 1 : currentIndex - 1
+      const bounded = Math.max(0, Math.min(products.length - 1, nextIndex))
+      return products[bounded].id
+    })
+    return true
+  }
+
   const isInteractiveTarget = (target) =>
     Boolean(target?.closest('button, a, input, select, textarea, label, [role="button"]'))
 
-  // Pointer events for desktop
   const onPointerDown = (event) => {
+    if (event.pointerType === 'touch') return
     if (isInteractiveTarget(event.target)) {
       setDragArmed(false)
       setIsDragging(false)
@@ -44,6 +82,7 @@ function Products() {
   }
 
   const onPointerMove = (event) => {
+    if (event.pointerType === 'touch') return
     if (!dragArmed || pointerIdRef.current !== event.pointerId) return
     dragDeltaXRef.current = event.clientX - dragStartXRef.current
     if (!isDragging && Math.abs(dragDeltaXRef.current) > 6) {
@@ -53,6 +92,7 @@ function Products() {
   }
 
   const onPointerUp = (event) => {
+    if (event.pointerType === 'touch') return
     if (!dragArmed || pointerIdRef.current !== event.pointerId) return
     setDragArmed(false)
     pointerIdRef.current = null
@@ -61,13 +101,11 @@ function Products() {
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId)
     }
-    const threshold = 50
-    if (dragDeltaXRef.current <= -threshold) goToIndex(activeIndex + 1)
-    if (dragDeltaXRef.current >= threshold) goToIndex(activeIndex - 1)
+    if (dragDeltaXRef.current <= -DRAG_THRESHOLD_PX) triggerStep(1)
+    else if (dragDeltaXRef.current >= DRAG_THRESHOLD_PX) triggerStep(-1)
     dragDeltaXRef.current = 0
   }
 
-  // Touch events for mobile
   const onTouchStart = (event) => {
     if (event.touches.length === 1) {
       touchStartXRef.current = event.touches[0].clientX
@@ -82,18 +120,38 @@ function Products() {
   }
 
   const onTouchEnd = () => {
-    const threshold = 50
-    if (touchDeltaXRef.current <= -threshold) goToIndex(activeIndex + 1)
-    if (touchDeltaXRef.current >= threshold) goToIndex(activeIndex - 1)
+    if (touchDeltaXRef.current <= -TOUCH_THRESHOLD_PX) triggerStep(1)
+    else if (touchDeltaXRef.current >= TOUCH_THRESHOLD_PX) triggerStep(-1)
     touchDeltaXRef.current = 0
   }
 
   const onWheel = (event) => {
-    const horizontal = event.deltaX
-    if (Math.abs(horizontal) < 18) return
-    if (Math.abs(horizontal) <= Math.abs(event.deltaY)) return
-    if (horizontal > 0) goToIndex(activeIndex + 1)
-    else goToIndex(activeIndex - 1)
+    if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return
+    const now = Date.now()
+
+    if (now - wheelSessionRef.current.lastEventAt > WHEEL_IDLE_RESET_MS) {
+      wheelSessionRef.current.accumulatedX = 0
+      wheelSessionRef.current.triggered = false
+    }
+
+    wheelSessionRef.current.lastEventAt = now
+
+    if (wheelSessionRef.current.triggered) {
+      event.preventDefault()
+      return
+    }
+
+    wheelSessionRef.current.accumulatedX += event.deltaX
+    if (Math.abs(wheelSessionRef.current.accumulatedX) < WHEEL_STEP_THRESHOLD) return
+
+    const direction = wheelSessionRef.current.accumulatedX > 0 ? 1 : -1
+    const didSlide = triggerStep(direction)
+
+    if (didSlide) {
+      wheelSessionRef.current.triggered = true
+      wheelSessionRef.current.accumulatedX = 0
+      event.preventDefault()
+    }
   }
 
   return (
@@ -110,7 +168,7 @@ function Products() {
             </h1>
             <p className="max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
               Each variant of Saltify Bamboo Salt is crafted through a multi-roasting process inside bamboo, delivering a deeper taste, enhanced purity, and a clean mineral finish.
-                <br /><br />Select your preferred size and experience the difference.
+              <br /><br />Select your preferred size and experience the difference.
             </p>
             <div className="flex flex-wrap gap-2">
               {products.map((item) => (
@@ -175,4 +233,3 @@ function Products() {
 }
 
 export default Products
-

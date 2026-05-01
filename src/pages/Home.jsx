@@ -1,4 +1,4 @@
-﻿import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import Hero from '../components/landing/Hero.jsx'
@@ -23,6 +23,13 @@ function Home() {
   const dragStartXRef = useRef(0)
   const dragDeltaXRef = useRef(0)
   const pointerIdRef = useRef(null)
+  const animationLockRef = useRef(false)
+  const animationUnlockTimerRef = useRef(null)
+  const wheelSessionRef = useRef({
+    accumulatedX: 0,
+    triggered: false,
+    lastEventAt: 0,
+  })
   const touchStartXRef = useRef(0)
   const touchDeltaXRef = useRef(0)
   const navigate = useNavigate()
@@ -38,9 +45,38 @@ function Home() {
     [],
   )
 
+  const ANIMATION_LOCK_MS = 480
+  const DRAG_THRESHOLD_PX = 56
+  const TOUCH_THRESHOLD_PX = 56
+  const WHEEL_STEP_THRESHOLD = 42
+  const WHEEL_IDLE_RESET_MS = 180
+
+  useEffect(() => () => {
+    if (animationUnlockTimerRef.current) {
+      window.clearTimeout(animationUnlockTimerRef.current)
+    }
+  }, [])
+
   const goToIndex = (nextIndex) => {
     const bounded = Math.max(0, Math.min(products.length - 1, nextIndex))
     setActiveIndex(bounded)
+  }
+
+  const triggerStep = (direction) => {
+    if (animationLockRef.current) return false
+    animationLockRef.current = true
+    if (animationUnlockTimerRef.current) {
+      window.clearTimeout(animationUnlockTimerRef.current)
+    }
+    animationUnlockTimerRef.current = window.setTimeout(() => {
+      animationLockRef.current = false
+    }, ANIMATION_LOCK_MS)
+
+    setActiveIndex((prev) => {
+      const next = direction > 0 ? prev + 1 : prev - 1
+      return Math.max(0, Math.min(products.length - 1, next))
+    })
+    return true
   }
 
   const onOrderNow = () => {
@@ -65,8 +101,8 @@ function Home() {
   const isInteractiveTarget = (target) =>
     Boolean(target?.closest('button, a, input, select, textarea, label, [role="button"]'))
 
-  // Pointer events for desktop
   const onPointerDown = (event) => {
+    if (event.pointerType === 'touch') return
     if (isInteractiveTarget(event.target)) {
       setDragArmed(false)
       setIsDragging(false)
@@ -80,6 +116,7 @@ function Home() {
   }
 
   const onPointerMove = (event) => {
+    if (event.pointerType === 'touch') return
     if (!dragArmed || pointerIdRef.current !== event.pointerId) return
     dragDeltaXRef.current = event.clientX - dragStartXRef.current
     if (!isDragging && Math.abs(dragDeltaXRef.current) > 6) {
@@ -89,6 +126,7 @@ function Home() {
   }
 
   const onPointerUp = (event) => {
+    if (event.pointerType === 'touch') return
     if (!dragArmed || pointerIdRef.current !== event.pointerId) return
     setDragArmed(false)
     pointerIdRef.current = null
@@ -97,13 +135,11 @@ function Home() {
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {
       event.currentTarget.releasePointerCapture(event.pointerId)
     }
-    const threshold = 50
-    if (dragDeltaXRef.current <= -threshold) goToIndex(activeIndex + 1)
-    if (dragDeltaXRef.current >= threshold) goToIndex(activeIndex - 1)
+    if (dragDeltaXRef.current <= -DRAG_THRESHOLD_PX) triggerStep(1)
+    else if (dragDeltaXRef.current >= DRAG_THRESHOLD_PX) triggerStep(-1)
     dragDeltaXRef.current = 0
   }
 
-  // Touch events for mobile
   const onTouchStart = (event) => {
     if (event.touches.length === 1) {
       touchStartXRef.current = event.touches[0].clientX
@@ -118,18 +154,38 @@ function Home() {
   }
 
   const onTouchEnd = () => {
-    const threshold = 50
-    if (touchDeltaXRef.current <= -threshold) goToIndex(activeIndex + 1)
-    if (touchDeltaXRef.current >= threshold) goToIndex(activeIndex - 1)
+    if (touchDeltaXRef.current <= -TOUCH_THRESHOLD_PX) triggerStep(1)
+    else if (touchDeltaXRef.current >= TOUCH_THRESHOLD_PX) triggerStep(-1)
     touchDeltaXRef.current = 0
   }
 
   const onWheel = (event) => {
-    const horizontal = event.deltaX
-    if (Math.abs(horizontal) < 18) return
-    if (Math.abs(horizontal) <= Math.abs(event.deltaY)) return
-    if (horizontal > 0) goToIndex(activeIndex + 1)
-    else goToIndex(activeIndex - 1)
+    if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return
+    const now = Date.now()
+
+    if (now - wheelSessionRef.current.lastEventAt > WHEEL_IDLE_RESET_MS) {
+      wheelSessionRef.current.accumulatedX = 0
+      wheelSessionRef.current.triggered = false
+    }
+
+    wheelSessionRef.current.lastEventAt = now
+
+    if (wheelSessionRef.current.triggered) {
+      event.preventDefault()
+      return
+    }
+
+    wheelSessionRef.current.accumulatedX += event.deltaX
+    if (Math.abs(wheelSessionRef.current.accumulatedX) < WHEEL_STEP_THRESHOLD) return
+
+    const direction = wheelSessionRef.current.accumulatedX > 0 ? 1 : -1
+    const didSlide = triggerStep(direction)
+
+    if (didSlide) {
+      wheelSessionRef.current.triggered = true
+      wheelSessionRef.current.accumulatedX = 0
+      event.preventDefault()
+    }
   }
 
   return (
@@ -151,7 +207,7 @@ function Home() {
               Modern Purity
             </h2>
             <p className="max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
-              Experience the rare art of bamboo salt — slow-roasted multiple times in bamboo at high temperatures, creating a mineral-rich, deeply balanced salt unlike anything else.
+              Experience the rare art of bamboo salt - slow-roasted multiple times in bamboo at high temperatures, creating a mineral-rich, deeply balanced salt unlike anything else.
             </p>
             <div className="flex items-center gap-2">
               {products.map((item, index) => (
@@ -254,8 +310,8 @@ function Home() {
             Rooted in Tradition.
           </h3>
           <p className="text-base leading-relaxed text-slate-600">
-            Saltify brings the ancient Korean art of bamboo salt to modern kitchens. Each batch is roasted multiple times in bamboo barrels, enhancing its purity, removing impurities, and enriching it with natural minerals. 
-            This is not just salt — it’s a ritual of refinement.
+            Saltify brings the ancient Korean art of bamboo salt to modern kitchens. Each batch is roasted multiple times in bamboo barrels, enhancing its purity, removing impurities, and enriching it with natural minerals.
+            This is not just salt - it is a ritual of refinement.
           </p>
         </motion.div>
         <motion.div
@@ -312,4 +368,3 @@ function Home() {
 }
 
 export default Home
-
