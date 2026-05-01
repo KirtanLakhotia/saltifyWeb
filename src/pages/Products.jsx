@@ -103,15 +103,14 @@ function Products() {
         <div className="relative grid items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="space-y-5">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
-              Product Focus
+              The Collection
             </p>
             <h1 className="section-headline text-slate-900">
-              Premium quality.
-              <br />
-              Visual clarity.
+              Refined. Mineral-rich. Essential.
             </h1>
             <p className="max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
-              Choose a variant to shift the environment and spotlight one pack at a time.
+              Each variant of Saltify Bamboo Salt is crafted through a multi-roasting process inside bamboo, delivering a deeper taste, enhanced purity, and a clean mineral finish.
+                <br /><br />Select your preferred size and experience the difference.
             </p>
             <div className="flex flex-wrap gap-2">
               {products.map((item) => (
@@ -164,7 +163,7 @@ function Products() {
       </section>
 
       <section className="space-y-6">
-        <h2 className="section-headline text-slate-900">All product variants</h2>
+        <h2 className="section-headline text-slate-900">Choose Your Ritual</h2>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />

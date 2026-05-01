@@ -67,14 +67,14 @@ function Features({ items }) {
             <p className="relative mt-3 text-sm leading-relaxed text-slate-600">
               {item.text}
             </p>
-            <div className="relative mt-6 overflow-hidden rounded-xl bg-slate-100 px-3 py-2 text-xs uppercase tracking-[0.22em] text-slate-600">
+            {/* <div className="relative mt-6 overflow-hidden rounded-xl bg-slate-100 px-3 py-2 text-xs uppercase tracking-[0.22em] text-slate-600">
               Hover to expand the story
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent"
                 animate={{ x: ['-100%', '100%'] }}
                 transition={{ duration: 2.6, repeat: Infinity, ease: 'linear' }}
               />
-            </div>
+            </div> */}
           </motion.article>
         ))}
       </div>

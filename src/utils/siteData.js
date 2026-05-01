@@ -10,27 +10,27 @@ export const navLinks = [
 export const benefits = [
   {
     title: 'Anti-Inflammatory Profile',
-    text: 'Naturally supports lower inflammation and better recovery in daily life.',
+    text: 'Traditionally valued for its ability to support a balanced lifestyle, helping the body maintain natural recovery and internal harmony.',
   },
   {
     title: 'Rich in Antioxidants',
-    text: 'Helps protect cells from oxidative stress and supports long-term wellness.',
+    text: 'Crafted through high-heat purification, helping reduce impurities and supporting overall cellular well-being.',
   },
   {
     title: '84 Trace Minerals',
-    text: 'Provides naturally occurring minerals that support metabolic health.',
+    text: 'Contains a wide spectrum of naturally occurring minerals that contribute to overall nutritional balance.',
   },
   {
     title: 'Heart-Friendly Balance',
-    text: 'Potassium and magnesium support healthy blood pressure and circulation.',
+    text: 'A balanced mineral profile including potassium and magnesium, supporting a mindful approach to daily nutrition.',
   },
   {
     title: 'Bone and Joint Support',
-    text: 'Mineral-rich composition helps maintain bone strength and joint comfort.',
+    text: 'Essential minerals contribute to maintaining bone strength and overall structural health.',
   },
   {
     title: 'Traditional Processing',
-    text: 'Inspired by Korean bamboo roasting methods for purity and depth of taste.',
+    text: 'Inspired by centuries-old Korean methods, the salt is roasted multiple times in bamboo at high temperatures — a process known to enhance purity and deepen its natural character.',
   },
 ]
 
@@ -40,7 +40,7 @@ export const products = [
     name: 'Saltify 6x Bamboo Salt (100 g)',
     image: '/finalll/100g_new_bgr.png',
     description:
-      'Perfect starter size for home use, daily cooking, and taste exploration.',
+      'Perfect entry into the world of bamboo salt. Ideal for daily meals, finishing touches, and discovering a deeper, cleaner taste.',
     price: 560,
     buyUrl:
       'https://www.amazon.in/Saltify-Bamboo-Alkaline-Roasted-Powdered/dp/B0CG654FGK',
@@ -50,7 +50,7 @@ export const products = [
     name: 'Saltify 6x Bamboo Salt (250 g)',
     image: '/finalll/250g_new_bgr.png',
     description:
-      'Balanced size for regular users who want consistency in every meal.',
+      'Crafted for consistency. A balanced choice for regular use, bringing refined flavor and mineral richness to every dish.',
     price: 1300,
     buyUrl:
       'https://www.amazon.in/Saltify-Bamboo-Alkaline-Roasted-Powdered/dp/B0CG64L274',
@@ -60,7 +60,7 @@ export const products = [
     name: 'Saltify 6x Bamboo Salt (500 g)',
     image: '/finalll/500g_new_bgr.png',
     description:
-      'Family-size premium pack for long-term use and maximum value.',
+      'A premium family pack designed for those who value purity every day. Long-lasting, deeply refined, and rich in natural minerals.',
     price: 2500,
     buyUrl:
       'https://www.amazon.in/Saltify-Bamboo-Alkaline-Roasted-Powdered/dp/B0CG643B3R',

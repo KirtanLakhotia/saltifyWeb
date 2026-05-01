@@ -21,10 +21,10 @@ function CTA() {
             Strong Call To Action
           </p>
           <h2 className="font-display mt-3 text-3xl sm:text-4xl">
-            Ready to elevate your standards?
+            Elevate Every Meal.
           </h2>
           <p className="mt-3 max-w-3xl text-sm text-slate-600 sm:text-base">
-            Discover material quality that performs consistently from sourcing to delivery.
+            Switch to a cleaner, richer, and more refined salt experience.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">

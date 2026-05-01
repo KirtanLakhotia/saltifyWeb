@@ -9,10 +9,10 @@ import { useAppContext } from '../context/hooks/useAppContext.js'
 import { homeFeatures, products } from '../utils/siteData.js'
 
 const journey = [
-  { title: 'Sourcing', text: 'Carefully selected inputs from trusted origins.' },
-  { title: 'Processing', text: 'Refined with precision-focused methods.' },
-  { title: 'Quality Check', text: 'Every batch verified for consistency.' },
-  { title: 'Delivery', text: 'Reliable fulfillment with premium handling.' },
+  { title: 'Sourcing', text: 'Pure Sea Salt Selection.We begin with high-quality sea salt, carefully chosen for its natural mineral composition.' },
+  { title: 'Processing', text: 'Bamboo Roasting Ritual. Salt is sealed in bamboo and roasted multiple times at extreme temperatures, following traditional methods.' },
+  { title: 'Quality Check', text: 'Purification & Enrichment. Each cycle removes impurities and enhances mineral richness, resulting in a cleaner, deeper taste.' },
+  { title: 'Delivery', text: 'Sealed Freshness. Packed with care to preserve purity, ensuring every grain reaches you in its finest form.' },
 ]
 
 function Home() {
@@ -143,16 +143,15 @@ function Home() {
         <div className="relative z-10 grid min-h-[76vh] items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="space-y-6">
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
-              Featured Product
+              Signature Collection
             </p>
             <h2 className="section-headline text-slate-900">
-              Designed to lead.
+              Ancient Craft
               <br />
-              Built to perform.
+              Modern Purity
             </h2>
             <p className="max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
-              Start with a focused product reveal before exploring the full range.
-              This creates a premium launch rhythm instead of a generic catalog scroll.
+              Experience the rare art of bamboo salt — slow-roasted multiple times in bamboo at high temperatures, creating a mineral-rich, deeply balanced salt unlike anything else.
             </p>
             <div className="flex items-center gap-2">
               {products.map((item, index) => (
@@ -252,11 +251,11 @@ function Home() {
           <h3 className="section-headline text-slate-900">
             Built on precision.
             <br />
-            Driven by innovation.
+            Rooted in Tradition.
           </h3>
           <p className="text-base leading-relaxed text-slate-600">
-            We build with precision and deliver with reliability. Our focus is
-            not just products, but performance that drives industries forward.
+            Saltify brings the ancient Korean art of bamboo salt to modern kitchens. Each batch is roasted multiple times in bamboo barrels, enhancing its purity, removing impurities, and enriching it with natural minerals. 
+            This is not just salt — it’s a ritual of refinement.
           </p>
         </motion.div>
         <motion.div
@@ -279,10 +278,10 @@ function Home() {
       <section className="space-y-8">
         <div className="max-w-3xl space-y-3">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
-            Process Journey
+            The Making of Bamboo Salt
           </p>
           <h3 className="section-headline text-slate-900">
-            From source to delivery.
+            A journey of fire, time, and transformation.
           </h3>
         </div>
         <div className="grid gap-4 md:grid-cols-4">

@@ -4,11 +4,11 @@ function Benefits() {
   return (
     <section className="space-y-7">
       <div>
-        <h1 className="font-display text-4xl text-stone-900">Health Benefits</h1>
+        <h1 className="font-display text-4xl text-stone-900">Wellness, Refined</h1>
         <p className="mt-2 max-w-3xl text-stone-600">
-          The same value proposition from your current website, now presented in
-          a modern premium grid for better readability and trust.
+          More than just salt — Saltify Bamboo Salt is crafted through a traditional multi-roasting process that enhances purity and enriches its natural mineral profile. Designed for those who value clean ingredients, balanced nutrition, and mindful living.
         </p>
+          
       </div>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {benefits.map((item) => (
