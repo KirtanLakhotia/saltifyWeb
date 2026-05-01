@@ -31,13 +31,13 @@ function Features({ items }) {
     <section className="space-y-8">
       <div className="max-w-3xl">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
-          Interactive Features
+          The Saltify Difference
         </p>
         <h2 className="font-display mt-3 text-3xl text-slate-900 sm:text-4xl">
-          Why Choose Saltify
+          For kitchens that refuse compromise.
         </h2>
         <p className="mt-3 text-sm text-slate-600 sm:text-base">
-          A more cinematic and product-minded way to tell the Saltify story.
+          A refined approach to salt — crafted through tradition, elevated by purity, and designed for those who value what goes into every meal.
         </p>
       </div>
 

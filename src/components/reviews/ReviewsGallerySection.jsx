@@ -247,7 +247,7 @@ function ReviewsGallerySection() {
         </div>
 <p className="mt-12 pt-6 text-center text-sm text-slate-500 border-t border-slate-200 md:mt-16 md:pt-8">
   And many more authentic reviews are on the way.
-</p>To Do
+</p>
       </div>
     </section>
   )

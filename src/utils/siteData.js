@@ -10,27 +10,31 @@ export const navLinks = [
 export const benefits = [
   {
     title: 'Anti-Inflammatory Profile',
-    text: 'Traditionally valued for its ability to support a balanced lifestyle, helping the body maintain natural recovery and internal harmony.',
+    text: 'Contains magnesium and sulfur compounds, which are traditionally associated with supporting the body’s natural recovery processes and internal balance.',
   },
   {
     title: 'Rich in Antioxidants',
-    text: 'Crafted through high-heat purification, helping reduce impurities and supporting overall cellular well-being.',
+    text: 'Formed through high-temperature roasting, creating compounds that help reduce oxidative stress and support overall cellular well-being.',
   },
   {
-    title: '84 Trace Minerals',
-    text: 'Contains a wide spectrum of naturally occurring minerals that contribute to overall nutritional balance.',
+    title: 'Mineral-Rich Composition',
+    text: 'Includes naturally occurring minerals such as calcium, iron, zinc, and potassium — contributing to overall nutritional balance and daily wellness.',
   },
   {
     title: 'Heart-Friendly Balance',
-    text: 'A balanced mineral profile including potassium and magnesium, supporting a mindful approach to daily nutrition.',
+    text: 'Contains potassium and magnesium, known to support healthy blood pressure balance and overall cardiovascular function.',
   },
   {
     title: 'Bone and Joint Support',
-    text: 'Essential minerals contribute to maintaining bone strength and overall structural health.',
+    text: 'Rich in calcium and phosphorus, essential minerals that contribute to maintaining bone strength and overall structural health.',
+  },
+  {
+    title: 'Naturally Alkaline',
+    text: 'Bamboo salt is known for its alkaline nature, helping support pH balance in the body and promoting a more balanced internal environment.',
   },
   {
     title: 'Traditional Processing',
-    text: 'Inspired by centuries-old Korean methods, the salt is roasted multiple times in bamboo at high temperatures — a process known to enhance purity and deepen its natural character.',
+    text: 'Roasted multiple times in bamboo using traditional Korean methods, a process that helps remove impurities while enhancing mineral depth and purity.',
   },
 ]
 

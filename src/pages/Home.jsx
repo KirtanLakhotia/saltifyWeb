@@ -310,8 +310,8 @@ function Home() {
             Rooted in Tradition.
           </h3>
           <p className="text-base leading-relaxed text-slate-600">
-            Saltify brings the ancient Korean art of bamboo salt to modern kitchens. Each batch is roasted multiple times in bamboo barrels, enhancing its purity, removing impurities, and enriching it with natural minerals.
-            This is not just salt - it is a ritual of refinement.
+            Saltify brings the ancient Korean art of bamboo salt to modern kitchens. Each batch is roasted multiple times in bamboo barrels, enhancing its purity, removing impurities, and enriching it with natural minerals while developing its naturally alkaline character. 
+            This is not just salt — it is a ritual of refinement.
           </p>
         </motion.div>
         <motion.div
