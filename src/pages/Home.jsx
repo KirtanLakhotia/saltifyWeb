@@ -323,7 +323,7 @@ function Home() {
         >
           <div className="absolute inset-0 rounded-[1.8rem] bg-gradient-to-tr from-sky-200/50 to-amber-100/60 blur-2xl" />
           <motion.img
-            src="/images/Saltify 2 cropped.png"
+            src="/finalll/hero-main.jpg"
             alt="Saltify visual"
             className="relative mx-auto w-full max-w-md rounded-[1.5rem] border border-slate-200 bg-white p-3 shadow-lg"
             whileHover={{ scale: 1.03 }}
