@@ -6,6 +6,7 @@ import { useEffect } from 'react'
 
 function Checkout() {
   const { user, cart, removeFromCart , setCart} = useAppContext()
+  const [orderPlaced, setOrderPlaced] = useState(false)
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -185,7 +186,8 @@ function Checkout() {
         const verifyData = await verifyRes.json();
 
         if (verifyData.success) {
-          setSuccessMessage('Order placed successfully. We will contact you soon.')
+          setOrderPlaced(true)
+          setSuccessMessage('Your order has been placed and we will contact you via mail.')
           setCart([]) // Clear cart on successful order
 
           // 👉 HERE save order in DB (important next step)
@@ -230,6 +232,40 @@ function Checkout() {
 
   const fieldClass =
     'mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-sky-300 focus:ring-2 focus:ring-sky-100'
+
+  if (orderPlaced) {
+    return (
+      <section className="flex min-h-[70vh] items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="w-full max-w-2xl rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-[0_20px_45px_rgba(148,163,184,0.18)] sm:p-10"
+        >
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-sky-500 text-white shadow-[0_18px_35px_rgba(52,211,153,0.32)]">
+            <svg viewBox="0 0 24 24" className="h-8 w-8 fill-none stroke-current stroke-[2.2]">
+              <path d="M5 12.5 9.2 16.7 19 7.5" />
+            </svg>
+          </div>
+          <p className="mt-6 text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">
+            Payment Successful
+          </p>
+          <h1 className="mt-3 section-headline text-slate-900">
+            Order Received
+          </h1>
+          <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
+            {successMessage}
+          </p>
+          <Link
+            to="/products"
+            className="mt-8 inline-flex rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_20px_rgba(56,189,248,0.24)] transition hover:scale-[1.01] hover:shadow-[0_0_28px_rgba(56,189,248,0.32)]"
+          >
+            Continue Shopping
+          </Link>
+        </motion.div>
+      </section>
+    )
+  }
 
   return (
     <section className="space-y-8">
