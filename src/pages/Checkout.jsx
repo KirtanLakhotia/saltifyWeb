@@ -7,6 +7,7 @@ import { useEffect } from 'react'
 function Checkout() {
   const { user, cart, removeFromCart , setCart} = useAppContext()
   const [orderPlaced, setOrderPlaced] = useState(false)
+  const [isCountryNoteOpen, setIsCountryNoteOpen] = useState(false)
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -15,6 +16,7 @@ function Checkout() {
     city: '',
     pincode: '',
     landmark: '',
+    country: 'India',
   })
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -47,6 +49,7 @@ function Checkout() {
           city: data.user.city || '',
           pincode: data.user.pincode || '',
           landmark: data.user.landmark || '',
+          country: data.user.country || 'India',
         })
       }
     } catch (err) {
@@ -123,6 +126,7 @@ function Checkout() {
         pincode: formData.pincode.trim(),
         fullName: formData.fullName.trim(),
         landmark: formData.landmark.trim(),
+        country: formData.country.trim(),
       }
 
       const response = await fetch(`${backendBase}/user/address`, {
@@ -421,6 +425,29 @@ function Checkout() {
               ) : null}
             </div>
 
+            <div className="sm:col-span-2">
+              <label className="text-sm font-semibold text-slate-700">Country</label>
+              <input
+                name="country"
+                value={formData.country}
+                readOnly
+                title="We are expanding our services. For now we are selling in India only."
+                className={`${fieldClass} cursor-not-allowed bg-slate-50 text-slate-500`}
+              />
+              <button
+                type="button"
+                onClick={() => setIsCountryNoteOpen((prev) => !prev)}
+                className="mt-2 text-xs font-semibold uppercase tracking-wide text-sky-700 hover:text-sky-800"
+              >
+                Why is this locked?
+              </button>
+              {isCountryNoteOpen ? (
+                <p className="mt-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-xs text-sky-800">
+                  We are expanding our services. For now we are selling in India only.
+                </p>
+              ) : null}
+            </div>
+            
             <div className="sm:col-span-2">
               <label className="text-sm font-semibold text-slate-700">
                 Landmark (Optional)
