@@ -11,7 +11,7 @@ function Hero() {
   const ctaRef = useRef(null)
   const imageRef = useRef(null)
 
-  const headline = useMemo(() => 'Quality is all that matters.', [])
+  const headline = useMemo(() => 'Beyond Ordinary Salt.', [])
 
   useEffect(() => {
     if (
